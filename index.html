@@ -21,7 +21,9 @@
   </head>
   <body>
     <!-- Escena VR principal -->
-    <a-scene background="color: #05070d">
+    <a-scene background="color: #05070d"
+         cursor="rayOrigin: mouse"
+         raycaster="objects: .clickable">
       <!-- Cámara (punto de vista del usuario) -->
       <a-entity id="rig" position="0 1.6 3">
         <a-entity camera look-controls wasd-controls></a-entity>
