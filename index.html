@@ -21,13 +21,16 @@
   </head>
   <body>
     <!-- Escena VR principal -->
-    <a-scene background="color: #05070d"
-         cursor="rayOrigin: mouse"
-         raycaster="objects: .clickable">
+    <a-scene background="color: #05070d">
       <!-- Cámara (punto de vista del usuario) -->
       <a-entity id="rig" position="0 1.6 3">
-        <a-entity camera look-controls wasd-controls></a-entity>
-      </a-entity>
+  <a-entity camera
+            look-controls
+            wasd-controls
+            cursor="rayOrigin: mouse"
+            raycaster="objects: .clickable">
+  </a-entity>
+</a-entity>
 
       <!-- Piso de oficina -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#1a1a1f"></a-plane>
