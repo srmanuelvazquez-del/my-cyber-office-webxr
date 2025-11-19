@@ -1,7 +1,7 @@
 // scene.js
-// Lógica de la pantalla izquierda + menú
+// Control del menú + contenido dinámico
 
-console.log("My Cyber Office - WebXR inicial cargado correctamente");
+console.log("My Cyber Office - WebXR cargado correctamente");
 
 AFRAME.registerComponent('left-screen-controller', {
   schema: {
@@ -10,45 +10,52 @@ AFRAME.registerComponent('left-screen-controller', {
   },
 
   init: function () {
-    const screen = this.el;
-    const menu = this.data.menu;
-    const label = this.data.label;
+    const label   = this.data.label;
+    const content = document.querySelector('#left-screen-content');
 
-    if (!menu || !label) {
-      console.warn("left-screen-controller: falta menu o label");
-      return;
-    }
-
-    // Función para cambiar el modo de la pantalla izquierda
     const setMode = (modeText) => {
       label.setAttribute('value', `Utilidades: ${modeText}`);
-      console.log("Pantalla izquierda modo:", modeText);
+
+      if (modeText === 'Calendario') {
+        content.setAttribute('value',
+          "Calendario (Ejemplo):\n" +
+          "L M M J V S D\n" +
+          "1 2 3 4 5 6 7\n" +
+          "8 9 10 11 12 13 14\n" +
+          "15 16 17 18 19 20 21\n" +
+          "22 23 24 25 26 27 28"
+        );
+      }
+
+      if (modeText === 'Browser') {
+        content.setAttribute('value',
+          "Browser de trabajo:\n" +
+          "- Usa esta pantalla para notas.\n" +
+          "- En Quest abre el navegador real\n" +
+          "  para páginas externas."
+        );
+      }
+
+      if (modeText === 'To-Do') {
+        content.setAttribute('value',
+          "Lista de tareas:\n" +
+          "[ ] Llamar al cliente 1\n" +
+          "[ ] Enviar email importante\n" +
+          "[ ] Revisar agenda de mañana"
+        );
+      }
     };
 
-    // Botones del menú
-    const btnCalendar = document.querySelector('#btn-left-calendar');
-    const btnBrowser  = document.querySelector('#btn-left-browser');
-    const btnTodo     = document.querySelector('#btn-left-todo');
+    document.querySelector('#btn-left-calendar')
+      .addEventListener('click', () => setMode('Calendario'));
 
-    if (btnCalendar) {
-      btnCalendar.addEventListener('click', (evt) => {
-        evt.stopPropagation();
-        setMode('Calendario');
-      });
-    }
+    document.querySelector('#btn-left-browser')
+      .addEventListener('click', () => setMode('Browser'));
 
-    if (btnBrowser) {
-      btnBrowser.addEventListener('click', (evt) => {
-        evt.stopPropagation();
-        setMode('Browser');
-      });
-    }
+    document.querySelector('#btn-left-todo')
+      .addEventListener('click', () => setMode('To-Do'));
 
-    if (btnTodo) {
-      btnTodo.addEventListener('click', (evt) => {
-        evt.stopPropagation();
-        setMode('To-Do');
-      });
-    }
+    // Modo inicial
+    setMode('To-Do');
   }
 });
