@@ -87,7 +87,7 @@
                 width="2"></a-text>
       </a-plane>
 
-      <!-- Pantalla IZQUIERDA -->
+      <!-- Pantalla IZQUIERDA (Utilidades + contenido To-Do) -->
       <a-plane id="screen-left"
                class="clickable"
                position="-2 2 -3"
@@ -105,16 +105,43 @@
                 color="#ffffff"
                 width="2"></a-text>
 
-        <!-- CONTENIDO -->
+        <!-- CONTENIDO (texto de la lista) -->
         <a-text id="left-screen-content"
                 value="Lista de tareas:\n[ ] Llamar al cliente 1\n[ ] Enviar email importante\n[ ] Revisar agenda de mañana"
-                position="-0.9 0 0.01"
+                position="-0.9 0.05 0.01"
                 align="left"
                 color="#cfe8ff"
                 width="2.2"></a-text>
+
+        <!-- HOTSPOTS clicables para cada tarea (transparentes) -->
+        <a-entity id="todo-hotspots">
+          <a-plane todo-item="index: 0"
+                   class="clickable"
+                   position="0 0.05 0.02"
+                   width="2"
+                   height="0.18"
+                   color="#ffffff"
+                   opacity="0"></a-plane>
+
+          <a-plane todo-item="index: 1"
+                   class="clickable"
+                   position="0 -0.05 0.02"
+                   width="2"
+                   height="0.18"
+                   color="#ffffff"
+                   opacity="0"></a-plane>
+
+          <a-plane todo-item="index: 2"
+                   class="clickable"
+                   position="0 -0.15 0.02"
+                   width="2"
+                   height="0.18"
+                   color="#ffffff"
+                   opacity="0"></a-plane>
+        </a-entity>
       </a-plane>
 
-      <!-- MENÚ (SIEMPRE VISIBLE) -->
+      <!-- MENÚ (modos de la pantalla izquierda) -->
       <a-entity id="left-menu" position="0 1.1 -2.5" visible="true">
         
         <a-plane width="2.4"
