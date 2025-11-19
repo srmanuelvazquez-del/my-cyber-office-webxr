@@ -1,5 +1,5 @@
 // scene.js
-// Menú de modos + lista To-Do interactiva
+// Menú desplegable + modos + To-Do interactivo
 
 console.log("My Cyber Office - WebXR cargado correctamente");
 
@@ -28,19 +28,19 @@ AFRAME.registerComponent('left-screen-controller', {
   },
 
   init: function () {
+    const menu    = this.data.menu;
     const label   = this.data.label;
     const content = document.querySelector('#left-screen-content');
 
-    if (!label || !content) {
-      console.warn("left-screen-controller: falta label o content");
+    if (!menu || !label || !content) {
+      console.warn("left-screen-controller: falta menu, label o content");
       return;
     }
 
+    // ---- Manejo de modos (Calendario / Browser / To-Do) ----
     const setMode = (modeText) => {
-      // Título
       label.setAttribute('value', `Utilidades: ${modeText}`);
 
-      // Contenido según modo
       if (modeText === 'Calendario') {
         content.setAttribute('value',
           "Calendario (Ejemplo):\n" +
@@ -64,15 +64,18 @@ AFRAME.registerComponent('left-screen-controller', {
       console.log("Pantalla izquierda modo:", modeText);
     };
 
-    // Botones del menú
+    // ---- Botones del menú ----
     const btnCalendar = document.querySelector('#btn-left-calendar');
     const btnBrowser  = document.querySelector('#btn-left-browser');
     const btnTodo     = document.querySelector('#btn-left-todo');
+
+    const hideMenu = () => menu.setAttribute('visible', false);
 
     if (btnCalendar) {
       btnCalendar.addEventListener('click', (evt) => {
         evt.stopPropagation();
         setMode('Calendario');
+        hideMenu();
       });
     }
 
@@ -80,6 +83,7 @@ AFRAME.registerComponent('left-screen-controller', {
       btnBrowser.addEventListener('click', (evt) => {
         evt.stopPropagation();
         setMode('Browser');
+        hideMenu();
       });
     }
 
@@ -87,6 +91,17 @@ AFRAME.registerComponent('left-screen-controller', {
       btnTodo.addEventListener('click', (evt) => {
         evt.stopPropagation();
         setMode('To-Do');
+        hideMenu();
+      });
+    }
+
+    // ---- Botón futurista ⧉ para abrir/cerrar menú ----
+    const toggleBtn = document.querySelector('#menu-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+        const isVisible = menu.getAttribute('visible');
+        menu.setAttribute('visible', !isVisible);
       });
     }
 
@@ -119,7 +134,7 @@ AFRAME.registerComponent('todo-item', {
       // Cambiar estado de la tarea
       todoState[idx] = !todoState[idx];
 
-      // Forzar modo To-Do
+      // Forzar modo To-Do (por si estabas en otro)
       if (label) {
         label.setAttribute('value', 'Utilidades: To-Do');
       }

@@ -141,9 +141,23 @@
         </a-entity>
       </a-plane>
 
-      <!-- MENÚ (modos de la pantalla izquierda) -->
-      <a-entity id="left-menu" position="0 1.1 -2.5" visible="true">
-        
+      <!-- BOTÓN FUTURISTA ⧉ PARA MOSTRAR/OCULTAR MENÚ -->
+      <a-plane id="menu-toggle"
+               class="clickable"
+               position="-1.4 1.15 -2.4"
+               width="0.25"
+               height="0.25"
+               color="#1e90ff"
+               material="shader: flat">
+        <a-text value="⧉"
+                position="0 0 0.01"
+                align="center"
+                width="0.8"
+                color="#ffffff"></a-text>
+      </a-plane>
+
+      <!-- MENÚ (INICIALMENTE OCULTO) -->
+      <a-entity id="left-menu" position="0 1.1 -2.5" visible="false">
         <a-plane width="2.4"
                  height="1"
                  color="#111625"
@@ -175,7 +189,6 @@
                  color="#247a67">
           <a-text value="✅ To-Do" position="0 0 0.01" align="center" color="#fff"></a-text>
         </a-plane>
-
       </a-entity>
 
       <!-- Escritorio -->
