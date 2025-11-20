@@ -1,5 +1,5 @@
 // scene.js
-// Menú desplegable + modos + To-Do interactivo + teclado virtual
+// Menú desplegable + modos + To-Do + teclado virtual + navegador interno
 
 console.log("My Cyber Office - WebXR cargado correctamente");
 
@@ -22,6 +22,54 @@ function buildTodoText() {
 
 // -------- ESTADO TECLADO --------
 let centerInputText = "";
+
+// -------- ESTADO NAVEGADOR DERECHO --------
+let currentBrowserUrl = "https://www.google.com";
+
+const browserPages = {
+  google: {
+    title: "Navegador: Google",
+    body:  "Simulación de Google.\nUsa este panel para pensar tus búsquedas.\nURL: https://www.google.com",
+    url:   "https://www.google.com"
+  },
+  youtube: {
+    title: "Navegador: YouTube",
+    body:  "Simulación de YouTube.\nOrganiza aquí qué videos verás para tu negocio.\nURL: https://www.youtube.com",
+    url:   "https://www.youtube.com"
+  },
+  vitalhealth: {
+    title: "Navegador: Vital Health",
+    body:  "Panel de trabajo para Vital Health.\nImagina aquí tu backoffice, ventas y clientes.\nURL: https://vitalhealth.com (ejemplo)",
+    url:   "https://vitalhealth.com"
+  },
+  gmail: {
+    title: "Navegador: Gmail",
+    body:  "Simulación de tu correo Gmail.\nÚsalo como recordatorio de emails importantes.\nURL: https://mail.google.com",
+    url:   "https://mail.google.com"
+  },
+  chatgpt: {
+    title: "Navegador: ChatGPT",
+    body:  "Simulación de ChatGPT.\nAquí planificas qué le vas a preguntar a Clarie.\nURL: https://chat.openai.com",
+    url:   "https://chat.openai.com"
+  }
+};
+
+function setRightBrowserPage(pageKey) {
+  const data = browserPages[pageKey];
+  if (!data) {
+    console.warn("Página de navegador no encontrada:", pageKey);
+    return;
+  }
+
+  const titleEl = document.querySelector('#right-browser-title');
+  const bodyEl  = document.querySelector('#right-browser-body');
+
+  if (titleEl) titleEl.setAttribute('value', data.title);
+  if (bodyEl)  bodyEl.setAttribute('value', data.body);
+
+  currentBrowserUrl = data.url;
+  console.log("Navegador cambió a:", pageKey, "URL:", currentBrowserUrl);
+}
 
 // -------- CONTROL PANTALLA IZQUIERDA --------
 AFRAME.registerComponent('left-screen-controller', {
@@ -53,10 +101,9 @@ AFRAME.registerComponent('left-screen-controller', {
         );
       } else if (modeText === 'Browser') {
         content.setAttribute('value',
-          "Browser de trabajo:\n" +
-          "- Usa esta pantalla para notas.\n" +
-          "- En Quest abre el navegador real\n" +
-          "  para páginas externas."
+          "Browser de trabajo (texto):\n" +
+          "- Escribe aquí notas rápidas.\n" +
+          "- Usa la pantalla derecha para el navegador visual."
         );
       } else if (modeText === 'To-Do') {
         content.setAttribute('value', buildTodoText());
@@ -99,10 +146,13 @@ AFRAME.registerComponent('left-screen-controller', {
 
     // Modo inicial
     setMode('To-Do');
+
+    // Navegador derecho modo inicial
+    setRightBrowserPage('google');
   }
 });
 
-// -------- BOTÓN ⧉ (MENU-TOGGLE) --------
+// -------- BOTÓN ⧉ (MENU-TOGGLE IZQUIERDO) --------
 AFRAME.registerComponent('menu-toggle', {
   init: function () {
     const menu = document.querySelector('#left-menu');
@@ -116,7 +166,7 @@ AFRAME.registerComponent('menu-toggle', {
       const isVisible = menu.getAttribute('visible');
       const next = !isVisible;
       menu.setAttribute('visible', next);
-      console.log("Menú ahora:", next ? "VISIBLE" : "OCULTO");
+      console.log("Menú izquierdo ahora:", next ? "VISIBLE" : "OCULTO");
     });
   }
 });
@@ -203,6 +253,38 @@ AFRAME.registerComponent('key-button', {
 
       updateOutput();
       console.log("Texto actual:", centerInputText);
+    });
+  }
+});
+
+// -------- BOTONES DEL NAVEGADOR DERECHO --------
+AFRAME.registerComponent('browser-link', {
+  schema: {
+    page: { type: 'string' }
+  },
+
+  init: function () {
+    const pageKey = this.data.page;
+    this.el.addEventListener('click', (evt) => {
+      evt.stopPropagation();
+      setRightBrowserPage(pageKey);
+    });
+  }
+});
+
+// -------- BOTÓN ABRIR EN NAVEGADOR REAL --------
+AFRAME.registerComponent('open-external', {
+  init: function () {
+    this.el.addEventListener('click', (evt) => {
+      evt.stopPropagation();
+      if (currentBrowserUrl) {
+        try {
+          window.open(currentBrowserUrl, '_blank');
+        } catch (e) {
+          console.warn("No se pudo abrir ventana externa:", e);
+        }
+        console.log("Solicitado abrir externamente:", currentBrowserUrl);
+      }
     });
   }
 });
