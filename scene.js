@@ -3,7 +3,7 @@
 
 console.log("My Cyber Office - WebXR cargado correctamente");
 
-// ---------- ESTADO TO-DO ----------
+// -------- ESTADO TO-DO --------
 const todoState = [false, false, false];
 const todoTexts = [
   "Llamar al cliente 1",
@@ -20,20 +20,10 @@ function buildTodoText() {
   return lines.join("\n");
 }
 
-// ---------- ESTADO TECLADO ----------
-let inputBuffer = "";
+// -------- ESTADO TECLADO --------
+let centerInputText = "";
 
-function updateInputText() {
-  const txt = document.querySelector('#input-text');
-  if (!txt) return;
-  if (inputBuffer.length === 0) {
-    txt.setAttribute('value', "Escribe aquí con el teclado virtual...");
-  } else {
-    txt.setAttribute('value', inputBuffer);
-  }
-}
-
-// ---------- CONTROL PANTALLA IZQUIERDA ----------
+// -------- CONTROL PANTALLA IZQUIERDA --------
 AFRAME.registerComponent('left-screen-controller', {
   schema: {
     label: { type: 'selector' }
@@ -112,7 +102,7 @@ AFRAME.registerComponent('left-screen-controller', {
   }
 });
 
-// ---------- BOTÓN FUTURISTA ⧉ (MOSTRAR/OCULTAR MENÚ) ----------
+// -------- BOTÓN ⧉ (MENU-TOGGLE) --------
 AFRAME.registerComponent('menu-toggle', {
   init: function () {
     const menu = document.querySelector('#left-menu');
@@ -131,7 +121,7 @@ AFRAME.registerComponent('menu-toggle', {
   }
 });
 
-// ---------- TAREAS CLICABLES ----------
+// -------- TAREAS CLICABLES --------
 AFRAME.registerComponent('todo-item', {
   schema: {
     index: { type: 'int' }
@@ -159,39 +149,60 @@ AFRAME.registerComponent('todo-item', {
       }
 
       content.setAttribute('value', buildTodoText());
+
       console.log("Tarea", idx, "nuevo estado:", todoState[idx]);
     });
   }
 });
 
-// ---------- TECLADO VIRTUAL ----------
-AFRAME.registerComponent('vk-key', {
+// -------- TECLAS DEL TECLADO --------
+AFRAME.registerComponent('key-button', {
   schema: {
-    char:   { type: 'string', default: '' },
-    action: { type: 'string', default: '' }
+    char: { type: 'string' }
   },
 
   init: function () {
-    const data = this.data;
+    const ch = this.data.char;
+    const el = this.el;
+    const output = document.querySelector('#center-input');
 
-    this.el.addEventListener('click', (evt) => {
+    if (!output) {
+      console.warn("key-button: no se encontró #center-input");
+      return;
+    }
+
+    // Visual
+    el.setAttribute('color', '#223b76');
+    el.setAttribute('material', 'shader: flat');
+
+    const labelEl = document.createElement('a-text');
+    let labelChar = ch;
+    if (ch === 'SPACE') labelChar = 'Espacio';
+    if (ch === 'BACKSPACE') labelChar = '⌫';
+    labelEl.setAttribute('value', labelChar);
+    labelEl.setAttribute('align', 'center');
+    labelEl.setAttribute('color', '#ffffff');
+    labelEl.setAttribute('width', 1.5);
+    labelEl.setAttribute('position', '0 0 0.01');
+    el.appendChild(labelEl);
+
+    const updateOutput = () => {
+      output.setAttribute('value', 'Entrada: ' + centerInputText);
+    };
+
+    el.addEventListener('click', (evt) => {
       evt.stopPropagation();
 
-      if (data.action === 'backspace') {
-        inputBuffer = inputBuffer.slice(0, -1);
-      } else if (data.action === 'space') {
-        inputBuffer += ' ';
-      } else if (data.char) {
-        inputBuffer += data.char;
+      if (ch === 'SPACE') {
+        centerInputText += ' ';
+      } else if (ch === 'BACKSPACE') {
+        centerInputText = centerInputText.slice(0, -1);
+      } else {
+        centerInputText += ch;
       }
 
-      updateInputText();
-      console.log("Input actual:", inputBuffer);
+      updateOutput();
+      console.log("Texto actual:", centerInputText);
     });
   }
-});
-
-// Inicializar texto del teclado al cargar
-document.addEventListener('DOMContentLoaded', () => {
-  updateInputText();
 });

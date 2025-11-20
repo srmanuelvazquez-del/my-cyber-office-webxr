@@ -58,18 +58,25 @@
               color="#e0f0ff"
               width="4"></a-text>
 
-      <!-- Pantalla CENTRAL -->
+      <!-- Pantalla CENTRAL (entrada del teclado) -->
       <a-plane id="screen-center"
                class="clickable"
                position="0 2 -3"
                width="2.5"
                height="1.5"
                color="#222633">
-        <a-text value="Pantalla Central - Browser"
-                position="0 0 0.01"
+        <a-text value="Escribe aquí con el teclado virtual..."
+                position="0 0.4 0.01"
                 align="center"
                 color="#ffffff"
                 width="2.2"></a-text>
+
+        <a-text id="center-input"
+                value="Entrada:"
+                position="-1.1 -0.1 0.01"
+                align="left"
+                color="#cfe8ff"
+                width="2.3"></a-text>
       </a-plane>
 
       <!-- Pantalla DERECHA -->
@@ -105,7 +112,7 @@
                 color="#ffffff"
                 width="2"></a-text>
 
-        <!-- CONTENIDO (texto de la lista) -->
+        <!-- CONTENIDO (lista / calendario / browser) -->
         <a-text id="left-screen-content"
                 value="Lista de tareas:\n[ ] Llamar al cliente 1\n[ ] Enviar email importante\n[ ] Revisar agenda de mañana"
                 position="-0.9 0.05 0.01"
@@ -113,7 +120,7 @@
                 color="#cfe8ff"
                 width="2.2"></a-text>
 
-        <!-- HOTSPOTS clicables para cada tarea (transparentes) -->
+        <!-- HOTSPOTS TO-DO -->
         <a-entity id="todo-hotspots">
           <a-plane todo-item="index: 0"
                    class="clickable"
@@ -145,7 +152,7 @@
       <a-plane id="menu-toggle"
                class="clickable"
                menu-toggle
-               position="-0.4 1.05 -2.4"
+               position="-1.3 1.1 -2.4"
                width="0.25"
                height="0.25"
                color="#1e90ff"
@@ -157,8 +164,11 @@
                 color="#ffffff"></a-text>
       </a-plane>
 
-      <!-- MENÚ (puede empezar visible o no, luego lo ajustamos) -->
-      <a-entity id="left-menu" position="0 1.1 -2.5" visible="false">
+      <!-- MENÚ DE LA PANTALLA IZQUIERDA (debajo de la pantalla) -->
+      <a-entity id="left-menu"
+                position="-2 1.05 -2.6"
+                rotation="0 20 0"
+                visible="true">
         <a-plane width="2.4"
                  height="1"
                  color="#111625"
@@ -170,7 +180,10 @@
                  width="2"
                  height="0.25"
                  color="#243b73">
-          <a-text value="📅 Calendario" position="0 0 0.01" align="center" color="#fff"></a-text>
+          <a-text value="📅 Calendario"
+                  position="0 0 0.01"
+                  align="center"
+                  color="#fff"></a-text>
         </a-plane>
 
         <a-plane id="btn-left-browser"
@@ -179,7 +192,10 @@
                  width="2"
                  height="0.25"
                  color="#245b8a">
-          <a-text value="🌐 Browser" position="0 0 0.01" align="center" color="#fff"></a-text>
+          <a-text value="🌐 Browser"
+                  position="0 0 0.01"
+                  align="center"
+                  color="#fff"></a-text>
         </a-plane>
 
         <a-plane id="btn-left-todo"
@@ -188,113 +204,77 @@
                  width="2"
                  height="0.25"
                  color="#247a67">
-          <a-text value="✅ To-Do" position="0 0 0.01" align="center" color="#fff"></a-text>
+          <a-text value="✅ To-Do"
+                  position="0 0 0.01"
+                  align="center"
+                  color="#fff"></a-text>
         </a-plane>
       </a-entity>
 
-      <!-- PANEL DE TEXTO DEL TECLADO -->
-      <a-plane id="input-panel"
-               position="0 1.35 -2.3"
-               width="3"
-               height="0.6"
-               color="#1b2235">
-        <a-text id="input-text"
-                value="Escribe aquí con el teclado virtual..."
-                position="-1.35 0.1 0.01"
-                align="left"
-                color="#e0f0ff"
-                width="2.8"></a-text>
-      </a-plane>
+      <!-- TECLADO VIRTUAL (fila números + QWERTY + espacio/borrar) -->
+      <a-entity id="keyboard" position="0 0.7 -2.4">
+        <!-- Fondo del teclado -->
+        <a-plane width="3.4" height="1.3" color="#111625" opacity="0.98"></a-plane>
 
-      <!-- TECLADO VIRTUAL (Q W E R T Y + espacio + borrar) -->
-      <a-entity id="virtual-keyboard" position="0 0.8 -2.3">
-        <!-- Fondo teclado -->
-        <a-plane width="3"
-                 height="0.9"
-                 color="#111625"
-                 opacity="0.98"></a-plane>
+        <!-- FILA NÚMEROS -->
+        <a-entity position="-1.55 0.55 0.01">
+          <a-plane class="clickable" key-button="char: 1" width="0.25" height="0.2" position="0 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 2" width="0.25" height="0.2" position="0.3 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 3" width="0.25" height="0.2" position="0.6 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 4" width="0.25" height="0.2" position="0.9 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 5" width="0.25" height="0.2" position="1.2 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 6" width="0.25" height="0.2" position="1.5 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 7" width="0.25" height="0.2" position="1.8 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 8" width="0.25" height="0.2" position="2.1 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 9" width="0.25" height="0.2" position="2.4 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: 0" width="0.25" height="0.2" position="2.7 0 0"></a-plane>
+        </a-entity>
 
-        <!-- Fila 1: Q W E R T Y -->
-        <a-plane class="clickable"
-                 vk-key="char: Q"
-                 position="-1.25 0.25 0.01"
-                 width="0.35"
-                 height="0.2"
-                 color="#223a7f">
-          <a-text value="Q" position="0 0 0.01" align="center" color="#ffffff" width="0.8"></a-text>
-        </a-plane>
+        <!-- FILA QWERTY -->
+        <a-entity position="-1.4 0.3 0.01">
+          <a-plane class="clickable" key-button="char: Q" width="0.25" height="0.2" position="0 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: W" width="0.25" height="0.2" position="0.3 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: E" width="0.25" height="0.2" position="0.6 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: R" width="0.25" height="0.2" position="0.9 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: T" width="0.25" height="0.2" position="1.2 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: Y" width="0.25" height="0.2" position="1.5 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: U" width="0.25" height="0.2" position="1.8 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: I" width="0.25" height="0.2" position="2.1 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: O" width="0.25" height="0.2" position="2.4 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: P" width="0.25" height="0.2" position="2.7 0 0"></a-plane>
+        </a-entity>
 
-        <a-plane class="clickable"
-                 vk-key="char: W"
-                 position="-0.75 0.25 0.01"
-                 width="0.35"
-                 height="0.2"
-                 color="#223a7f">
-          <a-text value="W" position="0 0 0.01" align="center" color="#ffffff" width="0.8"></a-text>
-        </a-plane>
+        <!-- FILA ASDF -->
+        <a-entity position="-1.25 0.05 0.01">
+          <a-plane class="clickable" key-button="char: A" width="0.25" height="0.2" position="0 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: S" width="0.25" height="0.2" position="0.3 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: D" width="0.25" height="0.2" position="0.6 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: F" width="0.25" height="0.2" position="0.9 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: G" width="0.25" height="0.2" position="1.2 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: H" width="0.25" height="0.2" position="1.5 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: J" width="0.25" height="0.2" position="1.8 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: K" width="0.25" height="0.2" position="2.1 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: L" width="0.25" height="0.2" position="2.4 0 0"></a-plane>
+        </a-entity>
 
-        <a-plane class="clickable"
-                 vk-key="char: E"
-                 position="-0.25 0.25 0.01"
-                 width="0.35"
-                 height="0.2"
-                 color="#223a7f">
-          <a-text value="E" position="0 0 0.01" align="center" color="#ffffff" width="0.8"></a-text>
-        </a-plane>
+        <!-- FILA ZXCV -->
+        <a-entity position="-0.95 -0.2 0.01">
+          <a-plane class="clickable" key-button="char: Z" width="0.25" height="0.2" position="0 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: X" width="0.25" height="0.2" position="0.3 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: C" width="0.25" height="0.2" position="0.6 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: V" width="0.25" height="0.2" position="0.9 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: B" width="0.25" height="0.2" position="1.2 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: N" width="0.25" height="0.2" position="1.5 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: M" width="0.25" height="0.2" position="1.8 0 0"></a-plane>
+        </a-entity>
 
-        <a-plane class="clickable"
-                 vk-key="char: R"
-                 position="0.25 0.25 0.01"
-                 width="0.35"
-                 height="0.2"
-                 color="#223a7f">
-          <a-text value="R" position="0 0 0.01" align="center" color="#ffffff" width="0.8"></a-text>
-        </a-plane>
-
-        <a-plane class="clickable"
-                 vk-key="char: T"
-                 position="0.75 0.25 0.01"
-                 width="0.35"
-                 height="0.2"
-                 color="#223a7f">
-          <a-text value="T" position="0 0 0.01" align="center" color="#ffffff" width="0.8"></a-text>
-        </a-plane>
-
-        <a-plane class="clickable"
-                 vk-key="char: Y"
-                 position="1.25 0.25 0.01"
-                 width="0.35"
-                 height="0.2"
-                 color="#223a7f">
-          <a-text value="Y" position="0 0 0.01" align="center" color="#ffffff" width="0.8"></a-text>
-        </a-plane>
-
-        <!-- Fila 2: ESPACIO + BORRAR -->
-        <a-plane class="clickable"
-                 vk-key="action: space"
-                 position="-0.3 -0.1 0.01"
-                 width="1.6"
-                 height="0.22"
-                 color="#245b8a">
-          <a-text value="Espacio"
-                  position="0 0 0.01"
-                  align="center"
-                  color="#ffffff"
-                  width="1.4"></a-text>
-        </a-plane>
-
-        <a-plane class="clickable"
-                 vk-key="action: backspace"
-                 position="1.0 -0.1 0.01"
-                 width="0.8"
-                 height="0.22"
-                 color="#7a2333">
-          <a-text value="← Borrar"
-                  position="0 0 0.01"
-                  align="center"
-                  color="#ffffff"
-                  width="1.4"></a-text>
-        </a-plane>
+        <!-- ESPACIO Y BORRAR -->
+        <a-entity position="-0.5 -0.45 0.01">
+          <a-plane class="clickable" key-button="char: SPACE"
+                   width="1.6" height="0.2" position="0 0 0"></a-plane>
+          <a-plane class="clickable" key-button="char: BACKSPACE"
+                   width="0.6" height="0.2" position="1.3 0 0"></a-plane>
+        </a-entity>
       </a-entity>
 
       <!-- Escritorio -->
