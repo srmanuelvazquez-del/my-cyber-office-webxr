@@ -1,9 +1,9 @@
 // scene.js
-// Menú desplegable + modos + To-Do interactivo
+// Menú desplegable + modos + To-Do interactivo + teclado virtual
 
 console.log("My Cyber Office - WebXR cargado correctamente");
 
-// Estado de las tareas (false = pendiente, true = completada)
+// ---------- ESTADO TO-DO ----------
 const todoState = [false, false, false];
 const todoTexts = [
   "Llamar al cliente 1",
@@ -11,7 +11,6 @@ const todoTexts = [
   "Revisar agenda de mañana"
 ];
 
-// Construye el texto que se ve en la pantalla para To-Do
 function buildTodoText() {
   let lines = ["Lista de tareas:"];
   for (let i = 0; i < todoState.length; i++) {
@@ -21,7 +20,20 @@ function buildTodoText() {
   return lines.join("\n");
 }
 
-// Controla modos de la pantalla izquierda (Calendario / Browser / To-Do)
+// ---------- ESTADO TECLADO ----------
+let inputBuffer = "";
+
+function updateInputText() {
+  const txt = document.querySelector('#input-text');
+  if (!txt) return;
+  if (inputBuffer.length === 0) {
+    txt.setAttribute('value', "Escribe aquí con el teclado virtual...");
+  } else {
+    txt.setAttribute('value', inputBuffer);
+  }
+}
+
+// ---------- CONTROL PANTALLA IZQUIERDA ----------
 AFRAME.registerComponent('left-screen-controller', {
   schema: {
     label: { type: 'selector' }
@@ -100,7 +112,7 @@ AFRAME.registerComponent('left-screen-controller', {
   }
 });
 
-// Botón futurista ⧉ para mostrar/ocultar menú
+// ---------- BOTÓN FUTURISTA ⧉ (MOSTRAR/OCULTAR MENÚ) ----------
 AFRAME.registerComponent('menu-toggle', {
   init: function () {
     const menu = document.querySelector('#left-menu');
@@ -119,7 +131,7 @@ AFRAME.registerComponent('menu-toggle', {
   }
 });
 
-// Componente para cada tarea clicable
+// ---------- TAREAS CLICABLES ----------
 AFRAME.registerComponent('todo-item', {
   schema: {
     index: { type: 'int' }
@@ -140,18 +152,46 @@ AFRAME.registerComponent('todo-item', {
     el.addEventListener('click', (evt) => {
       evt.stopPropagation();
 
-      // Cambiar estado de la tarea
       todoState[idx] = !todoState[idx];
 
-      // Forzar modo To-Do
       if (label) {
         label.setAttribute('value', 'Utilidades: To-Do');
       }
 
-      // Actualizar texto
       content.setAttribute('value', buildTodoText());
-
       console.log("Tarea", idx, "nuevo estado:", todoState[idx]);
     });
   }
+});
+
+// ---------- TECLADO VIRTUAL ----------
+AFRAME.registerComponent('vk-key', {
+  schema: {
+    char:   { type: 'string', default: '' },
+    action: { type: 'string', default: '' }
+  },
+
+  init: function () {
+    const data = this.data;
+
+    this.el.addEventListener('click', (evt) => {
+      evt.stopPropagation();
+
+      if (data.action === 'backspace') {
+        inputBuffer = inputBuffer.slice(0, -1);
+      } else if (data.action === 'space') {
+        inputBuffer += ' ';
+      } else if (data.char) {
+        inputBuffer += data.char;
+      }
+
+      updateInputText();
+      console.log("Input actual:", inputBuffer);
+    });
+  }
+});
+
+// Inicializar texto del teclado al cargar
+document.addEventListener('DOMContentLoaded', () => {
+  updateInputText();
 });
