@@ -21,23 +21,22 @@ function buildTodoText() {
   return lines.join("\n");
 }
 
+// Controla modos de la pantalla izquierda (Calendario / Browser / To-Do)
 AFRAME.registerComponent('left-screen-controller', {
   schema: {
-    menu:  { type: 'selector' },
     label: { type: 'selector' }
   },
 
   init: function () {
-    const menu    = this.data.menu;
     const label   = this.data.label;
     const content = document.querySelector('#left-screen-content');
+    const menu    = document.querySelector('#left-menu');
 
-    if (!menu || !label || !content) {
-      console.warn("left-screen-controller: falta menu, label o content");
+    if (!label || !content) {
+      console.warn("left-screen-controller: falta label o content");
       return;
     }
 
-    // ---- Manejo de modos (Calendario / Browser / To-Do) ----
     const setMode = (modeText) => {
       label.setAttribute('value', `Utilidades: ${modeText}`);
 
@@ -64,12 +63,13 @@ AFRAME.registerComponent('left-screen-controller', {
       console.log("Pantalla izquierda modo:", modeText);
     };
 
-    // ---- Botones del menú ----
+    const hideMenu = () => {
+      if (menu) menu.setAttribute('visible', false);
+    };
+
     const btnCalendar = document.querySelector('#btn-left-calendar');
     const btnBrowser  = document.querySelector('#btn-left-browser');
     const btnTodo     = document.querySelector('#btn-left-todo');
-
-    const hideMenu = () => menu.setAttribute('visible', false);
 
     if (btnCalendar) {
       btnCalendar.addEventListener('click', (evt) => {
@@ -95,18 +95,27 @@ AFRAME.registerComponent('left-screen-controller', {
       });
     }
 
-    // ---- Botón futurista ⧉ para abrir/cerrar menú ----
-    const toggleBtn = document.querySelector('#menu-toggle');
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', (evt) => {
-        evt.stopPropagation();
-        const isVisible = menu.getAttribute('visible');
-        menu.setAttribute('visible', !isVisible);
-      });
-    }
-
     // Modo inicial
     setMode('To-Do');
+  }
+});
+
+// Botón futurista ⧉ para mostrar/ocultar menú
+AFRAME.registerComponent('menu-toggle', {
+  init: function () {
+    const menu = document.querySelector('#left-menu');
+    if (!menu) {
+      console.warn("menu-toggle: no se encontró #left-menu");
+      return;
+    }
+
+    this.el.addEventListener('click', (evt) => {
+      evt.stopPropagation();
+      const isVisible = menu.getAttribute('visible');
+      const next = !isVisible;
+      menu.setAttribute('visible', next);
+      console.log("Menú ahora:", next ? "VISIBLE" : "OCULTO");
+    });
   }
 });
 
@@ -134,7 +143,7 @@ AFRAME.registerComponent('todo-item', {
       // Cambiar estado de la tarea
       todoState[idx] = !todoState[idx];
 
-      // Forzar modo To-Do (por si estabas en otro)
+      // Forzar modo To-Do
       if (label) {
         label.setAttribute('value', 'Utilidades: To-Do');
       }
